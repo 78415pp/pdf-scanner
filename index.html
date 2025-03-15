@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Scanner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <!-- Title and subtitle removed as requested -->
+
+            <!-- Top Features Bar -->
+            <div class="top-features">
+                <button class="feature-btn" id="flash-btn" title="फ्लैश">
+                    <i class="fas fa-bolt"></i>
+                    <span>Flash</span>
+                </button>
+                <button class="feature-btn" id="hd-btn" title="HD मोड">
+                    <i class="fas fa-hd"></i>
+                    <span>HD</span>
+                </button>
+                <button class="feature-btn" id="filter-btn" title="फिल्टर">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Filter</span>
+                </button>
+                <button class="feature-btn" id="grid-btn" title="ग्रिड">
+                    <i class="fas fa-th"></i>
+                    <span>Grid</span>
+                </button>
+                <button class="feature-btn" id="settings-btn" title="सेटिंग्स">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <div class="preview-container">
+                <video id="camera-preview" autoplay playsinline></video>
+                <canvas id="capture-canvas" style="display: none;"></canvas>
+                <div class="no-preview">
+                    <i class="fas fa-camera"></i>
+                    <p>कैमरा एक्सेस करने के लिए कैप्चर बटन पर क्लिक क</p>
+                </div>
+                <div class="captured-image-container" style="display: none;">
+                    <img id="captured-image" src="" alt="Captured Image">
+                </div>
+                <div class="scan-overlay" id="scan-overlay">
+                    <div class="scan-line"></div>
+                </div>
+                <div class="grid-overlay" id="grid-overlay" style="display: none;">
+                    <!-- Grid lines will be created by CSS -->
+                </div>
+                <div id="hd-indicator" style="display: none;">HD</div>
+            </div>
+
+            <div class="scanner-options">
+                <button id="flash-toggle" class="option-btn" title="फ्लैश">
+                    <i class="fas fa-bolt"></i>
+                </button>
+                <button id="mode-toggle" class="option-btn" title="मोड बदलें">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="camera-switch" class="option-btn" title="कैमरा बदलें">
+                    <i class="fas fa-camera-rotate"></i>
+                </button>
+                <button id="gallery-btn" class="option-btn" title="गैलरी">
+                    <i class="fas fa-images"></i>
+                </button>
+            </div>
+
+            <!-- Bottom Mode Selector -->
+            <div class="bottom-modes">
+                <button class="mode-btn" id="book-mode" title="किताब स्कैन">
+                    <i class="fas fa-book"></i>
+                    <span>Book</span>
+                </button>
+                <button class="mode-btn" id="text-mode" title="टेक्स्ट पहचानें">
+                    <i class="fas fa-font"></i>
+                    <span>To Text</span>
+                </button>
+                <button class="mode-btn" id="docs-mode" title="डॉक्यूमेंट स्कैन">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Docs</span>
+                </button>
+                <button class="mode-btn" id="idcard-mode" title="आईडी कार्ड स्कैन">
+                    <i class="fas fa-id-card"></i>
+                    <span>ID Card</span>
+                </button>
+                <button class="mode-btn" id="qrcode-mode" title="QR कोड स्कैन">
+                    <i class="fas fa-qrcode"></i>
+                    <span>QR Code</span>
+                </button>
+                <button class="mode-btn" id="import-mode" title="फाइल इंपोर्ट">
+                    <i class="fas fa-file-import"></i>
+                    <span>Import</span>
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="action-buttons">
+                <button id="cancel-btn" class="action-btn" style="display: none;">
+                    <i class="fas fa-times"></i>
+                    <span>रद्द करें</span>
+                </button>
+                
+                <button id="capture-btn" class="action-btn primary">
+                    <i class="fas fa-camera"></i>
+                    <span>कैप्चर</span>
+                </button>
+                
+                <button id="save-btn" class="action-btn" style="display: none;">
+                    <i class="fas fa-check"></i>
+                    <span>सेव करें</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <div id="pdf-preview-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-pdf"></i> PDF Preview</h2>
+                <button id="close-modal-btn" title="बंद करें"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdf-iframe" src=""></iframe>
+            </div>
+            <div class="modal-footer">
+                <button id="download-pdf-btn" class="action-btn primary">
+                    <i class="fas fa-download"></i>
+                    <span>डाउनलोड PDF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div id="filter-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-sliders-h"></i> फिल्टर सेटिंग्स</h2>
+                <button id="close-filter-modal-btn" title="बंद करें"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body filter-options">
+                <div class="filter-option" data-filter="normal">
+                    <div class="filter-preview normal"></div>
+                    <span>Normal</span>
+                </div>
+                <div class="filter-option" data-filter="grayscale">
+                    <div class="filter-preview grayscale"></div>
+                    <span>Grayscale</span>
+                </div>
+                <div class="filter-option" data-filter="enhanced">
+                    <div class="filter-preview enhanced"></div>
+                    <span>Enhanced</span>
+                </div>
+                <div class="filter-option" data-filter="bw">
+                    <div class="filter-preview bw"></div>
+                    <span>B&W</span>
+                </div>
+                <div class="filter-option" data-filter="contrast">
+                    <div class="filter-preview contrast"></div>
+                    <span>Contrast</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> सेटिंग्स</h2>
+                <button id="close-settings-modal-btn" title="बंद करें"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body settings-options">
+                <div class="setting-group">
+                    <label>स्कैन क्वालिटी:</label>
+                    <select id="quality-setting">
+                        <option value="low">Low (300 DPI)</option>
+                        <option value="medium" selected>Medium (600 DPI)</option>
+                        <option value="high">High (900 DPI)</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>PDF फॉर्मेट:</label>
+                    <select id="format-setting">
+                        <option value="a4" selected>A4</option>
+                        <option value="letter">Letter</option>
+                        <option value="auto">Auto (Image Size)</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>ऑटो एन्हांसमेंट:</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="auto-enhance-toggle" checked>
+                        <label for="auto-enhance-toggle"></label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>डार्क मोड:</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="dark-mode-toggle" checked>
+                        <label for="dark-mode-toggle"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Register Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html> 
