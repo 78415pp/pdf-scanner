@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "xyz.appmaker.gwocdp",
+      "sha256_cert_fingerprints": ["6D:F2:0A:51:C0:E0:9B:80:02:AE:5B:DC:F9:69:80:68:39:AE:BF:9C:BA:4F:D5:54:93:96:62:CB:15:25:D8:14"]
+    }
+  }
+]
